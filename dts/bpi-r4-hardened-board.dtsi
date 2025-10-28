@@ -15,8 +15,8 @@
 
     gpio-leds {
         compatible = "gpio-leds";
-        led_green: led-green { function = LED_FUNCTION_STATUS; color = <LED_COLOR_ID_GREEN>; gpios = <&{/soc/pinctrl@10005000} 79 GPIO_ACTIVE_HIGH>; default-state = "on"; };
-        led_blue:  led-blue  { function = LED_FUNCTION_WPS;    color = <LED_COLOR_ID_BLUE>;  gpios = <&{/soc/pinctrl@10005000} 63 GPIO_ACTIVE_HIGH>; default-state = "off"; };
+        led_green: led-green { function = LED_FUNCTION_STATUS; color = <LED_COLOR_ID_GREEN>; gpios = <&{/pinctrl@10005000} 79 GPIO_ACTIVE_HIGH>; default-state = "on"; };
+        led_blue:  led-blue  { function = LED_FUNCTION_WPS;    color = <LED_COLOR_ID_BLUE>;  gpios = <&{/pinctrl@10005000} 63 GPIO_ACTIVE_HIGH>; default-state = "off"; };
     };
 
     reg_1p8v: regulator-1p8v { compatible = "regulator-fixed"; regulator-name = "fixed-1.8V"; regulator-min-microvolt = <1800000>; regulator-max-microvolt = <1800000>; regulator-boot-on; regulator-always-on; };

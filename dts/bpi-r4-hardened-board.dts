@@ -24,7 +24,7 @@
         cooling-levels = <0 80 128 255>;
         #cooling-cells = <2>;
         /* path to SoC PWM */
-        pwms = <&{/soc/pwm@10048000} 0 50000>;
+        pwms = <&{/pwm@10048000} 0 50000>;
         status = "okay";
     };
 
@@ -35,14 +35,14 @@
             function = LED_FUNCTION_STATUS;
             color = <LED_COLOR_ID_GREEN>;
             /* path to SoC pinctrl (GPIO controller) */
-            gpios = <&{/soc/pinctrl@10005000} 79 GPIO_ACTIVE_HIGH>;
+            gpios = <&{/pinctrl@10005000} 79 GPIO_ACTIVE_HIGH>;
             default-state = "on";
         };
 
         led_blue: led-blue {
             function = LED_FUNCTION_WPS;
             color = <LED_COLOR_ID_BLUE>;
-            gpios = <&{/soc/pinctrl@10005000} 63 GPIO_ACTIVE_HIGH>;
+            gpios = <&{/pinctrl@10005000} 63 GPIO_ACTIVE_HIGH>;
             default-state = "off";
         };
     };
@@ -70,11 +70,11 @@
         compatible = "sff,sfp";
         i2c-bus = <&i2c_sfp1>;
         maximum-power-milliwatt = <3000>;
-        los-gpios         = <&{/soc/pinctrl@10005000} 54 GPIO_ACTIVE_HIGH>;
-        mod-def0-gpios    = <&{/soc/pinctrl@10005000} 82 GPIO_ACTIVE_LOW>;
-        rate-select0-gpios= <&{/soc/pinctrl@10005000} 21 GPIO_ACTIVE_LOW>;
-        tx-disable-gpios  = <&{/soc/pinctrl@10005000} 70 GPIO_ACTIVE_HIGH>;
-        tx-fault-gpios    = <&{/soc/pinctrl@10005000} 69 GPIO_ACTIVE_HIGH>;
+        los-gpios         = <&{/pinctrl@10005000} 54 GPIO_ACTIVE_HIGH>;
+        mod-def0-gpios    = <&{/pinctrl@10005000} 82 GPIO_ACTIVE_LOW>;
+        rate-select0-gpios= <&{/pinctrl@10005000} 21 GPIO_ACTIVE_LOW>;
+        tx-disable-gpios  = <&{/pinctrl@10005000} 70 GPIO_ACTIVE_HIGH>;
+        tx-fault-gpios    = <&{/pinctrl@10005000} 69 GPIO_ACTIVE_HIGH>;
     };
 };
 
@@ -163,7 +163,7 @@
     pca9545: i2c-mux@70 {
         compatible = "nxp,pca9545";
         reg = <0x70>;
-        reset-gpios = <&{/soc/pinctrl@10005000} 5 GPIO_ACTIVE_LOW>;
+        reset-gpios = <&{/pinctrl@10005000} 5 GPIO_ACTIVE_LOW>;
         #address-cells = <1>;
         #size-cells = <0>;
 
@@ -200,7 +200,7 @@
 &pcie3 { status = "okay"; };
 
 /* Pinmux groups – attach to SoC pinctrl path instead of &pio */
-&{/soc/pinctrl@10005000} {
+&{/pinctrl@10005000} {
     i2c0_pins: i2c0-g0-pins { mux { function = "i2c"; groups = "i2c0_1"; }; };
     i2c1_pins: i2c1-g0-pins { mux { function = "i2c"; groups = "i2c1_0"; }; };
     i2c2_1_pins: i2c2-g1-pins { mux { function = "i2c"; groups = "i2c2_1"; }; };
