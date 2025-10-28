@@ -3,14 +3,10 @@
 #include <dt-bindings/gpio/gpio.h>
 #include <dt-bindings/leds/common.h>
 
-/*
- * This fragment only adds self-contained devices that do not rely on
- * upstream SoC/board labels. It avoids phandle edits to unknown nodes.
- */
+/* Self-contained add-ons that rely only on base labels (&pwm, &pio) */
  / {
     chosen { stdout-path = "serial0:115200n8"; };
 
-    /* PWM fan hooked to SoC PWM ch0; 'pio' label is standard on MTK trees */
     fan: pwm-fan {
         compatible = "pwm-fan";
         cooling-levels = <0 80 128 255>;
@@ -37,7 +33,6 @@
         };
     };
 
-    /* Board-fixed rails for convenience; do not override upstream regulators */
     reg_1p8v: regulator-1p8v {
         compatible = "regulator-fixed";
         regulator-name = "fixed-1.8V";
@@ -55,18 +50,4 @@
         regulator-boot-on;
         regulator-always-on;
     };
-
-    /* --- OPTIONAL (commented) ---
-     * SFP cages need known I2C mux and GMAC labels from your base DTS.
-     * Once we confirm upstream names, uncomment and set i2c-bus + attach to GMAC.
-     *
-     * sfp1: sfp1 {
-     *     compatible = "sff,sfp";
-     *     i2c-bus = <&i2c_sfp1>;   // requires label in base DTS!
-     *     maximum-power-milliwatt = <3000>;
-     *     // los-gpios = <&pio ...>;
-     * };
-     *
-     * sfp2: sfp2 { ... };
-     */
 };
