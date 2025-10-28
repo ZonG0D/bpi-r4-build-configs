@@ -216,7 +216,7 @@
     mmc0_pins_sdcard:   mmc0-sdcard-pins { mux { function = "flash"; groups = "sdcard"; }; };
 
     spi0_flash_pins: spi0-flash-pins { mux { function = "spi"; groups = "spi0", "spi0_wp_hold"; }; };
-}
+};
 
 /* Make sure the SoC PWM node itself is enabled */
 &{/soc/pwm@10048000} { status = "okay"; };
