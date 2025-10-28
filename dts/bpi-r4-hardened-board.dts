@@ -12,9 +12,9 @@
     compatible = "bananapi,bpi-r4", "mediatek,mt7988a";
 
     aliases {
-        ethernet0 = &gmac0; /* may not exist in plain SoC dtsi */
-        ethernet1 = &gmac1; /* may not exist in plain SoC dtsi */
-        ethernet2 = &gmac2; /* likely doesn't exist; harmless if ignored */
+        ethernet0 = &gmac0;
+        ethernet1 = &gmac1;
+        ethernet2 = &gmac2;
     };
 
     chosen { stdout-path = "serial0:115200n8"; };
@@ -23,7 +23,8 @@
         compatible = "pwm-fan";
         cooling-levels = <0 80 128 255>;
         #cooling-cells = <2>;
-        pwms = <&pwm 0 50000>;
+        /* path to SoC PWM */
+        pwms = <&{/soc/pwm@10048000} 0 50000>;
         status = "okay";
     };
 
@@ -33,14 +34,15 @@
         led_green: led-green {
             function = LED_FUNCTION_STATUS;
             color = <LED_COLOR_ID_GREEN>;
-            gpios = <&pio 79 GPIO_ACTIVE_HIGH>;
+            /* path to SoC pinctrl (GPIO controller) */
+            gpios = <&{/soc/pinctrl@10005000} 79 GPIO_ACTIVE_HIGH>;
             default-state = "on";
         };
 
         led_blue: led-blue {
             function = LED_FUNCTION_WPS;
             color = <LED_COLOR_ID_BLUE>;
-            gpios = <&pio 63 GPIO_ACTIVE_HIGH>;
+            gpios = <&{/soc/pinctrl@10005000} 63 GPIO_ACTIVE_HIGH>;
             default-state = "off";
         };
     };
@@ -63,35 +65,33 @@
         regulator-always-on;
     };
 
-    /* SFP1 cage (WAN), i2c bus provided below via PCA9545 ch1.
-     * NOTE: Not wired to a MAC here because &gmac2 is not guaranteed in SoC dtsi.
-     */
+    /* SFP1 cage (WAN) on PCA9545 ch1 */
     sfp1: sfp1 {
         compatible = "sff,sfp";
         i2c-bus = <&i2c_sfp1>;
         maximum-power-milliwatt = <3000>;
-        los-gpios = <&pio 54 GPIO_ACTIVE_HIGH>;
-        mod-def0-gpios = <&pio 82 GPIO_ACTIVE_LOW>;
-        rate-select0-gpios = <&pio 21 GPIO_ACTIVE_LOW>;
-        tx-disable-gpios = <&pio 70 GPIO_ACTIVE_HIGH>;
-        tx-fault-gpios = <&pio 69 GPIO_ACTIVE_HIGH>;
+        los-gpios         = <&{/soc/pinctrl@10005000} 54 GPIO_ACTIVE_HIGH>;
+        mod-def0-gpios    = <&{/soc/pinctrl@10005000} 82 GPIO_ACTIVE_LOW>;
+        rate-select0-gpios= <&{/soc/pinctrl@10005000} 21 GPIO_ACTIVE_LOW>;
+        tx-disable-gpios  = <&{/soc/pinctrl@10005000} 70 GPIO_ACTIVE_HIGH>;
+        tx-fault-gpios    = <&{/soc/pinctrl@10005000} 69 GPIO_ACTIVE_HIGH>;
     };
 };
 
-/* CPU supplies (present in SoC dtsi) */
+/* CPU supplies */
 &cci  { proc-supply = <&rt5190_buck3>; };
 &cpu0 { proc-supply = <&rt5190_buck3>; };
 &cpu1 { proc-supply = <&rt5190_buck3>; };
 &cpu2 { proc-supply = <&rt5190_buck3>; };
 &cpu3 { proc-supply = <&rt5190_buck3>; };
 
-/* Thermal trips/map may already exist in some trees; safe to keep if not duplicated */
+/* Thermal maps */
 &cpu_thermal {
     trips {
         cpu_trip_hot: hot { temperature = <120000>; hysteresis = <2000>; type = "hot"; };
         cpu_trip_active_high: active-high { temperature = <115000>; hysteresis = <2000>; type = "active"; };
-        cpu_trip_active_med: active-med { temperature = <85000>; hysteresis = <2000>; type = "active"; };
-        cpu_trip_active_low: active-low { temperature = <40000>; hysteresis = <2000>; type = "active"; };
+        cpu_trip_active_med:  active-med  { temperature = <85000>;  hysteresis = <2000>; type = "active"; };
+        cpu_trip_active_low:  active-low  { temperature = <40000>;  hysteresis = <2000>; type = "active"; };
     };
     cooling-maps {
         map-cpu-active-high { cooling-device = <&fan 3 3>; trip = <&cpu_trip_active_high>; };
@@ -100,15 +100,7 @@
     };
 };
 
-/* --- DROP these until we confirm labels in your tree ---
-&gmac2 {
-    managed = "in-band-status";
-    phy-mode = "usxgmii";
-    sfp = <&sfp1>;
-};
---------------------------------------------------------- */
-
-/* I2C0: RT5190A PMIC (buck/ldo rails) */
+/* I2C0: RT5190A PMIC */
 &i2c0 {
     pinctrl-names = "default";
     pinctrl-0 = <&i2c0_pins>;
@@ -171,7 +163,7 @@
     pca9545: i2c-mux@70 {
         compatible = "nxp,pca9545";
         reg = <0x70>;
-        reset-gpios = <&pio 5 GPIO_ACTIVE_LOW>;
+        reset-gpios = <&{/soc/pinctrl@10005000} 5 GPIO_ACTIVE_LOW>;
         #address-cells = <1>;
         #size-cells = <0>;
 
@@ -207,8 +199,8 @@
 &pcie2 { status = "okay"; };
 &pcie3 { status = "okay"; };
 
-/* Pinmux groups created under &pio */
-&pio {
+/* Pinmux groups – attach to SoC pinctrl path instead of &pio */
+&{/soc/pinctrl@10005000} {
     i2c0_pins: i2c0-g0-pins { mux { function = "i2c"; groups = "i2c0_1"; }; };
     i2c1_pins: i2c1-g0-pins { mux { function = "i2c"; groups = "i2c1_0"; }; };
     i2c2_1_pins: i2c2-g1-pins { mux { function = "i2c"; groups = "i2c2_1"; }; };
@@ -224,9 +216,11 @@
     mmc0_pins_sdcard:   mmc0-sdcard-pins { mux { function = "flash"; groups = "sdcard"; }; };
 
     spi0_flash_pins: spi0-flash-pins { mux { function = "spi"; groups = "spi0", "spi0_wp_hold"; }; };
-};
+}
 
-&pwm      { status = "okay"; };
+/* Make sure the SoC PWM node itself is enabled */
+&{/soc/pwm@10048000} { status = "okay"; };
+
 &serial0  { status = "okay"; };
 
 &spi0 {
