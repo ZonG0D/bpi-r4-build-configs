@@ -4,13 +4,13 @@
 
 #include <dt-bindings/gpio/gpio.h>
 
-/* SD host at 0x11230000 exists on MT7988; uses standard 'pio' label */
+/* SD host at 0x11230000 exists on MT7988 */
 &{/soc/mmc@11230000} {
     pinctrl-names = "default", "state_uhs";
     pinctrl-0 = <&mmc0_pins_sdcard>;
     pinctrl-1 = <&mmc0_pins_sdcard>;
 
-    cd-gpios = <&{/pinctrl@10005000} 12 GPIO_ACTIVE_LOW>;
+    cd-gpios = <&pio 12 GPIO_ACTIVE_LOW>;
     bus-width = <4>;
     max-frequency = <52000000>;
     cap-sd-highspeed;
