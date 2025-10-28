@@ -7,254 +7,377 @@
 
 #include "mt7988a.dtsi"
 
+#define BPI_R4_PWM_PHANDLE &pwm
+#define BPI_R4_PIO_PHANDLE &pio
+#include "bpi-r4-hardened-common.dtsi"
+#undef BPI_R4_PWM_PHANDLE
+#undef BPI_R4_PIO_PHANDLE
+
 / {
-    model = "Banana Pi BPI-R4 (hardened, no-RFB)";
-    compatible = "bananapi,bpi-r4", "mediatek,mt7988a";
+        model = "Banana Pi BPI-R4 (hardened, no-RFB)";
+        compatible = "bananapi,bpi-r4", "mediatek,mt7988a";
 
-    /* Commented out to avoid unresolved labels if gmac* aren't in mt7988a.dtsi
-    aliases {
-        ethernet0 = &gmac0;
-        ethernet1 = &gmac1;
-        ethernet2 = &gmac2;
-    };
-    */
+	/* 4 GiB DDR4 on the production Banana Pi R4 */
+	memory@40000000 {
+		device_type = "memory";
+		reg = <0x0 0x40000000 0x0 0xc0000000>;
+	};
 
-    chosen { stdout-path = "serial0:115200n8"; };
+        /* Commented out to avoid unresolved labels if gmac* aren't in mt7988a.dtsi
+        aliases {
+                ethernet0 = &gmac0;
+                ethernet1 = &gmac1;
+		ethernet2 = &gmac2;
+	};
+	*/
 
-    fan: pwm-fan {
-        compatible = "pwm-fan";
-        cooling-levels = <0 80 128 255>;
-        #cooling-cells = <2>;
-        /* Use the PWM label from your SoC dtsi (usually &pwm or &pwm0) */
-        pwms = <&pwm 0 50000>;
-        status = "okay";
-    };
-
-    gpio-leds {
-        compatible = "gpio-leds";
-
-        led_green: led-green {
-            function = LED_FUNCTION_STATUS;
-            color = <LED_COLOR_ID_GREEN>;
-            gpios = <&pio 79 GPIO_ACTIVE_HIGH>;
-            default-state = "on";
-        };
-
-        led_blue: led-blue {
-            function = LED_FUNCTION_WPS;
-            color = <LED_COLOR_ID_BLUE>;
-            gpios = <&pio 63 GPIO_ACTIVE_HIGH>;
-            default-state = "off";
-        };
-    };
-
-    reg_1p8v: regulator-1p8v {
-        compatible = "regulator-fixed";
-        regulator-name = "fixed-1.8V";
-        regulator-min-microvolt = <1800000>;
-        regulator-max-microvolt = <1800000>;
-        regulator-boot-on;
-        regulator-always-on;
-    };
-
-    reg_3p3v: regulator-3p3v {
-        compatible = "regulator-fixed";
-        regulator-name = "fixed-3.3V";
-        regulator-min-microvolt = <3300000>;
-        regulator-max-microvolt = <3300000>;
-        regulator-boot-on;
-        regulator-always-on;
-    };
-
-    /* SFP1 cage (WAN) on PCA9545 ch1 */
-    sfp1: sfp1 {
-        compatible = "sff,sfp";
-        i2c-bus = <&i2c_sfp1>;
-        maximum-power-milliwatt = <3000>;
-        los-gpios          = <&pio 54 GPIO_ACTIVE_HIGH>;
-        mod-def0-gpios     = <&pio 82 GPIO_ACTIVE_LOW>;
-        rate-select0-gpios = <&pio 21 GPIO_ACTIVE_LOW>;
-        tx-disable-gpios   = <&pio 70 GPIO_ACTIVE_HIGH>;
-        tx-fault-gpios     = <&pio 69 GPIO_ACTIVE_HIGH>;
-    };
+	/* SFP1 cage (WAN) on PCA9545 ch1 */
+	sfp1: sfp1 {
+		compatible = "sff,sfp";
+		i2c-bus = <&i2c_sfp1>;
+		maximum-power-milliwatt = <3000>;
+		los-gpios = <&pio 54 GPIO_ACTIVE_HIGH>;
+		mod-def0-gpios = <&pio 82 GPIO_ACTIVE_LOW>;
+		rate-select0-gpios = <&pio 21 GPIO_ACTIVE_LOW>;
+		tx-disable-gpios = <&pio 70 GPIO_ACTIVE_HIGH>;
+		tx-fault-gpios = <&pio 69 GPIO_ACTIVE_HIGH>;
+	};
 };
 
 /* CPU supplies (labels exist in SoC dtsi) */
-&cci  { proc-supply = <&rt5190_buck3>; };
-&cpu0 { proc-supply = <&rt5190_buck3>; };
-&cpu1 { proc-supply = <&rt5190_buck3>; };
-&cpu2 { proc-supply = <&rt5190_buck3>; };
-&cpu3 { proc-supply = <&rt5190_buck3>; };
+&cci {
+	proc-supply = <&rt5190_buck3>;
+};
+
+&cpu0 {
+	proc-supply = <&rt5190_buck3>;
+};
+
+&cpu1 {
+	proc-supply = <&rt5190_buck3>;
+};
+
+&cpu2 {
+	proc-supply = <&rt5190_buck3>;
+};
+
+&cpu3 {
+	proc-supply = <&rt5190_buck3>;
+};
 
 /* Thermal maps */
 &cpu_thermal {
-    trips {
-        cpu_trip_hot: hot { temperature = <120000>; hysteresis = <2000>; type = "hot"; };
-        cpu_trip_active_high: active-high { temperature = <115000>; hysteresis = <2000>; type = "active"; };
-        cpu_trip_active_med:  active-med  { temperature = <85000>;  hysteresis = <2000>; type = "active"; };
-        cpu_trip_active_low:  active-low  { temperature = <40000>;  hysteresis = <2000>; type = "active"; };
-    };
-    cooling-maps {
-        map-cpu-active-high { cooling-device = <&fan 3 3>; trip = <&cpu_trip_active_high>; };
-        map-cpu-active-med  { cooling-device = <&fan 2 2>; trip = <&cpu_trip_active_med>; };
-        map-cpu-active-low  { cooling-device = <&fan 1 1>; trip = <&cpu_trip_active_low>; };
-    };
+	trips {
+		cpu_trip_hot: hot {
+			temperature = <120000>;
+			hysteresis = <2000>;
+			type = "hot";
+		};
+
+		cpu_trip_active_high: active-high {
+			temperature = <115000>;
+			hysteresis = <2000>;
+			type = "active";
+		};
+
+		cpu_trip_active_med: active-med {
+			temperature = <85000>;
+			hysteresis = <2000>;
+			type = "active";
+		};
+
+		cpu_trip_active_low: active-low {
+			temperature = <40000>;
+			hysteresis = <2000>;
+			type = "active";
+		};
+	};
+
+	cooling-maps {
+		map-cpu-active-high {
+			cooling-device = <&fan 3 3>;
+			trip = <&cpu_trip_active_high>;
+		};
+
+		map-cpu-active-med {
+			cooling-device = <&fan 2 2>;
+			trip = <&cpu_trip_active_med>;
+		};
+
+		map-cpu-active-low {
+			cooling-device = <&fan 1 1>;
+			trip = <&cpu_trip_active_low>;
+		};
+	};
 };
 
 /* I2C0: RT5190A PMIC */
 &i2c0 {
-    pinctrl-names = "default";
-    pinctrl-0 = <&i2c0_pins>;
-    status = "okay";
+	pinctrl-names = "default";
+	pinctrl-0 = <&i2c0_pins>;
+	status = "okay";
 
-    rt5190a_64: rt5190a@64 {
-        compatible = "richtek,rt5190a";
-        reg = <0x64>;
-        vin2-supply = <&rt5190_buck1>;
-        vin3-supply = <&rt5190_buck1>;
-        vin4-supply = <&rt5190_buck1>;
+	rt5190a_64: rt5190a@64 {
+		compatible = "richtek,rt5190a";
+		reg = <0x64>;
+		vin2-supply = <&rt5190_buck1>;
+		vin3-supply = <&rt5190_buck1>;
+		vin4-supply = <&rt5190_buck1>;
 
-        regulators {
-            rt5190_buck1: buck1 {
-                regulator-name = "rt5190a-buck1";
-                regulator-min-microvolt = <5090000>;
-                regulator-max-microvolt = <5090000>;
-                regulator-allowed-modes = <RT5190A_OPMODE_AUTO>, <RT5190A_OPMODE_FPWM>;
-                regulator-boot-on;
-                regulator-always-on;
-            };
-            buck2 {
-                regulator-name = "vcore";
-                regulator-min-microvolt = <600000>;
-                regulator-max-microvolt = <1400000>;
-                regulator-boot-on;
-                regulator-always-on;
-            };
-            rt5190_buck3: buck3 {
-                regulator-name = "vproc";
-                regulator-min-microvolt = <600000>;
-                regulator-max-microvolt = <1400000>;
-                regulator-boot-on;
-            };
-            buck4 {
-                regulator-name = "rt5190a-buck4";
-                regulator-min-microvolt = <1800000>;
-                regulator-max-microvolt = <1800000>;
-                regulator-allowed-modes = <RT5190A_OPMODE_AUTO>, <RT5190A_OPMODE_FPWM>;
-                regulator-boot-on;
-                regulator-always-on;
-            };
-            ldo {
-                regulator-name = "rt5190a-ldo";
-                regulator-min-microvolt = <1800000>;
-                regulator-max-microvolt = <1800000>;
-                regulator-boot-on;
-                regulator-always-on;
-            };
-        };
-    };
+		regulators {
+			rt5190_buck1: buck1 {
+				regulator-name = "rt5190a-buck1";
+				regulator-min-microvolt = <5090000>;
+				regulator-max-microvolt = <5090000>;
+				regulator-allowed-modes = <RT5190A_OPMODE_AUTO>, <RT5190A_OPMODE_FPWM>;
+				regulator-boot-on;
+				regulator-always-on;
+			};
+
+			buck2 {
+				regulator-name = "vcore";
+				regulator-min-microvolt = <600000>;
+				regulator-max-microvolt = <1400000>;
+				regulator-boot-on;
+				regulator-always-on;
+			};
+
+			rt5190_buck3: buck3 {
+				regulator-name = "vproc";
+				regulator-min-microvolt = <600000>;
+				regulator-max-microvolt = <1400000>;
+				regulator-boot-on;
+			};
+
+			buck4 {
+				regulator-name = "rt5190a-buck4";
+				regulator-min-microvolt = <1800000>;
+				regulator-max-microvolt = <1800000>;
+				regulator-allowed-modes = <RT5190A_OPMODE_AUTO>, <RT5190A_OPMODE_FPWM>;
+				regulator-boot-on;
+				regulator-always-on;
+			};
+
+			ldo {
+				regulator-name = "rt5190a-ldo";
+				regulator-min-microvolt = <1800000>;
+				regulator-max-microvolt = <1800000>;
+				regulator-boot-on;
+				regulator-always-on;
+			};
+		};
+	};
 };
 
 /* I2C2: PCA9545 mux; ch0 rtc+eeprom, ch1 SFP1 */
 &i2c2 {
-    pinctrl-names = "default";
-    pinctrl-0 = <&i2c2_1_pins>;
-    status = "okay";
+	pinctrl-names = "default";
+	pinctrl-0 = <&i2c2_1_pins>;
+	status = "okay";
 
-    pca9545: i2c-mux@70 {
-        compatible = "nxp,pca9545";
-        reg = <0x70>;
-        reset-gpios = <&pio 5 GPIO_ACTIVE_LOW>;
-        #address-cells = <1>;
-        #size-cells = <0>;
+	pca9545: i2c-mux@70 {
+		compatible = "nxp,pca9545";
+		reg = <0x70>;
+		reset-gpios = <&pio 5 GPIO_ACTIVE_LOW>;
+		#address-cells = <1>;
+		#size-cells = <0>;
 
-        i2c@0 {
-            #address-cells = <1>;
-            #size-cells = <0>;
-            reg = <0>;
+		i2c@0 {
+			#address-cells = <1>;
+			#size-cells = <0>;
+			reg = <0>;
 
-            pcf8563: rtc@51 {
-                compatible = "nxp,pcf8563";
-                reg = <0x51>;
-                #clock-cells = <0>;
-            };
+			pcf8563: rtc@51 {
+				compatible = "nxp,pcf8563";
+				reg = <0x51>;
+				#clock-cells = <0>;
+			};
 
-            eeprom@57 {
-                compatible = "atmel,24c02";
-                reg = <0x57>;
-                size = <256>;
-            };
-        };
+			eeprom@57 {
+				compatible = "atmel,24c02";
+				reg = <0x57>;
+				size = <256>;
+				read-only;
+			};
+		};
 
-        i2c_sfp1: i2c@1 {
-            #address-cells = <1>;
-            #size-cells = <0>;
-            reg = <1>;
-        };
-    };
+		i2c_sfp1: i2c@1 {
+			#address-cells = <1>;
+			#size-cells = <0>;
+			reg = <1>;
+		};
+	};
 };
 
 /* Enable PCIe ports */
-&pcie0 { status = "okay"; };
-&pcie1 { status = "okay"; };
-&pcie2 { status = "okay"; };
-&pcie3 { status = "okay"; };
+&pcie0 {
+	status = "okay";
+};
+
+&pcie1 {
+	status = "okay";
+};
+
+&pcie2 {
+	status = "okay";
+};
+
+&pcie3 {
+	status = "okay";
+};
 
 /* Pinmux groups – attach to SoC pinctrl via &pio */
 &pio {
-    i2c0_pins: i2c0-g0-pins { mux { function = "i2c"; groups = "i2c0_1"; }; };
-    i2c1_pins: i2c1-g0-pins { mux { function = "i2c"; groups = "i2c1_0"; }; };
-    i2c2_1_pins: i2c2-g1-pins { mux { function = "i2c"; groups = "i2c2_1"; }; };
+	i2c0_pins: i2c0-g0-pins {
+		mux {
+			function = "i2c";
+			groups = "i2c0_1";
+		};
+	};
 
-    gbe0_led0_pins: gbe0-led0-pins { mux { function = "led"; groups = "gbe0_led0"; }; };
-    gbe1_led0_pins: gbe1-led0-pins { mux { function = "led"; groups = "gbe1_led0"; }; };
-    gbe2_led0_pins: gbe2-led0-pins { mux { function = "led"; groups = "gbe2_led0"; }; };
-    gbe3_led0_pins: gbe3-led0-pins { mux { function = "led"; groups = "gbe3_led0"; }; };
-    i2p5gbe_led0_pins: 2p5gbe-led0-pins { mux { function = "led"; groups = "2p5gbe_led0"; }; };
+	i2c1_pins: i2c1-g0-pins {
+		mux {
+			function = "i2c";
+			groups = "i2c1_0";
+		};
+	};
 
-    mmc0_pins_emmc_45: mmc0-emmc-45-pins { mux { function = "flash"; groups = "emmc_45"; }; };
-    mmc0_pins_emmc_51: mmc0-emmc-51-pins { mux { function = "flash"; groups = "emmc_51"; }; };
-    mmc0_pins_sdcard:   mmc0-sdcard-pins { mux { function = "flash"; groups = "sdcard"; }; };
+	i2c2_1_pins: i2c2-g1-pins {
+		mux {
+			function = "i2c";
+			groups = "i2c2_1";
+		};
+	};
 
-    spi0_flash_pins: spi0-flash-pins { mux { function = "spi"; groups = "spi0", "spi0_wp_hold"; }; };
+	gbe0_led0_pins: gbe0-led0-pins {
+		mux {
+			function = "led";
+			groups = "gbe0_led0";
+		};
+	};
+
+	gbe1_led0_pins: gbe1-led0-pins {
+		mux {
+			function = "led";
+			groups = "gbe1_led0";
+		};
+	};
+
+	gbe2_led0_pins: gbe2-led0-pins {
+		mux {
+			function = "led";
+			groups = "gbe2_led0";
+		};
+	};
+
+	gbe3_led0_pins: gbe3-led0-pins {
+		mux {
+			function = "led";
+			groups = "gbe3_led0";
+		};
+	};
+
+	i2p5gbe_led0_pins: 2p5gbe-led0-pins {
+		mux {
+			function = "led";
+			groups = "2p5gbe_led0";
+		};
+	};
+
+	mmc0_pins_emmc_45: mmc0-emmc-45-pins {
+		mux {
+			function = "flash";
+			groups = "emmc_45";
+		};
+	};
+
+	mmc0_pins_emmc_51: mmc0-emmc-51-pins {
+		mux {
+			function = "flash";
+			groups = "emmc_51";
+		};
+	};
+
+	mmc0_pins_sdcard: mmc0-sdcard-pins {
+		mux {
+			function = "flash";
+			groups = "sdcard";
+		};
+	};
+
+	spi0_flash_pins: spi0-flash-pins {
+		mux {
+			function = "spi";
+			groups = "spi0", "spi0_wp_hold";
+		};
+	};
 };
 
 /* Ensure PWM node is enabled */
-&pwm { status = "okay"; };
+&pwm {
+	status = "okay";
+};
 
-&serial0 { status = "okay"; };
+&serial0 {
+	status = "okay";
+};
 
 &spi0 {
-    pinctrl-names = "default";
-    pinctrl-0 = <&spi0_flash_pins>;
-    status = "okay";
+	pinctrl-names = "default";
+	pinctrl-0 = <&spi0_flash_pins>;
+	status = "okay";
 
-    spi_nand: flash@0 {
-        compatible = "spi-nand";
-        reg = <0>;
-        spi-max-frequency = <52000000>;
-        spi-tx-bus-width = <4>;
-        spi-rx-bus-width = <4>;
-    };
+	spi_nand: flash@0 {
+		compatible = "spi-nand";
+		reg = <0>;
+		spi-max-frequency = <52000000>;
+		spi-tx-bus-width = <4>;
+		spi-rx-bus-width = <4>;
+	};
 };
 
-&spi1 { status = "okay"; };
+&spi1 {
+	status = "okay";
+};
 
 &spi_nand {
-    partitions {
-        compatible = "fixed-partitions";
-        #address-cells = <1>;
-        #size-cells = <1>;
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
 
-        partition@0 {
-            label = "bl2";
-            reg = <0x0 0x200000>;
-            read-only;
-        };
-    };
+		partition@0 {
+			label = "bl2";
+			reg = <0x0 0x200000>;
+			read-only;
+		};
+
+		partition@200000 {
+			label = "fip";
+			reg = <0x200000 0x400000>;
+			read-only;
+		};
+
+		partition@600000 {
+			label = "u-boot-env";
+			reg = <0x600000 0x200000>;
+			lock;
+		};
+	};
 };
 
-&ssusb1 { status = "okay"; };
-&tphy   { status = "okay"; };
-&watchdog { status = "okay"; };
-&xsphy  { status = "okay"; };
+&ssusb1 {
+	status = "okay";
+};
+
+&tphy {
+	status = "okay";
+};
+
+&watchdog {
+	status = "okay";
+};
+
+&xsphy {
+	status = "okay";
+};

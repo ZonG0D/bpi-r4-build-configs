@@ -10,7 +10,9 @@ setenv fdt_addr_r 0x48000000
 if test -z "${env_inited}"; then
   echo [env] initializing persistent environment on FAT
   setenv env_inited 1
-  if test -z "${ethaddr}"; then setenv ethaddr 00:13:37:98:88:01; fi
+  if test -z "${ethaddr}"; then
+    echo [warn] ethaddr is unset; configure a unique MAC with 'setenv ethaddr'
+  fi
   saveenv
 fi
 

@@ -2,23 +2,6 @@
 #include <dt-bindings/gpio/gpio.h>
 #include <dt-bindings/leds/common.h>
 
- / {
-    chosen { stdout-path = "serial0:115200n8"; };
-
-    fan: pwm-fan {
-        compatible = "pwm-fan";
-        cooling-levels = <0 80 128 255>;
-        #cooling-cells = <2>;
-        pwms = <&{/soc/pwm@10048000} 0 50000>;
-        status = "okay";
-    };
-
-    gpio-leds {
-        compatible = "gpio-leds";
-        led_green: led-green { function = LED_FUNCTION_STATUS; color = <LED_COLOR_ID_GREEN>; gpios = <&{/pinctrl@10005000} 79 GPIO_ACTIVE_HIGH>; default-state = "on"; };
-        led_blue:  led-blue  { function = LED_FUNCTION_WPS;    color = <LED_COLOR_ID_BLUE>;  gpios = <&{/pinctrl@10005000} 63 GPIO_ACTIVE_HIGH>; default-state = "off"; };
-    };
-
-    reg_1p8v: regulator-1p8v { compatible = "regulator-fixed"; regulator-name = "fixed-1.8V"; regulator-min-microvolt = <1800000>; regulator-max-microvolt = <1800000>; regulator-boot-on; regulator-always-on; };
-    reg_3p3v: regulator-3p3v { compatible = "regulator-fixed"; regulator-name = "fixed-3.3V"; regulator-min-microvolt = <3300000>; regulator-max-microvolt = <3300000>; regulator-boot-on; regulator-always-on; };
-};
+#define BPI_R4_PWM_PHANDLE &{/soc/pwm@10048000}
+#define BPI_R4_PIO_PHANDLE &{/pinctrl@10005000}
+#include "bpi-r4-hardened-common.dtsi"
