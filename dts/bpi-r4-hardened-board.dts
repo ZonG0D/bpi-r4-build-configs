@@ -1,8 +1,11 @@
 // SPDX-License-Identifier: MIT
+/dts-v1/;
+
 #include "bpi-r4-hardened-board.dtsi"
+
 / {
-    compatible = "custom,r4", "mediatek,mt7988a";
-    model = "MT7988A R4-type (2x SFP+)";
+    compatible = "bananapi,bpi-r4", "mediatek,mt7988a";
+    model = "Banana Pi BPI-R4 (2x SFP+)";
     chassis-type = "embedded";
 
     sfp2: sfp2 {
@@ -18,12 +21,21 @@
 };
 
 &gmac1 {
+    /* 10G SFP+ via usxgmii */
     managed = "in-band-status";
     phy-mode = "usxgmii";
     sfp = <&sfp2>;
+    status = "okay";
 };
 
+/* I2C mux channels for SFP cages (make both available) */
 &pca9545 {
+    i2c_sfp1: i2c@1 {
+        #address-cells = <1>;
+        #size-cells = <0>;
+        reg = <1>;
+    };
+
     i2c_sfp2: i2c@2 {
         #address-cells = <1>;
         #size-cells = <0>;
