@@ -164,7 +164,7 @@
     pca9545: i2c-mux@70 {
         compatible = "nxp,pca9545";
         reg = <0x70>;
-        reset-gpios = <&{/pinctrl@10005000} 5 GPIO_ACTIVE_LOW>;
+        reset-gpios = <&pio 5 GPIO_ACTIVE_LOW>;
         #address-cells = <1>;
         #size-cells = <0>;
 
