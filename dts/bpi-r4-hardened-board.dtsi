@@ -3,7 +3,6 @@
 #include <dt-bindings/leds/common.h>
 #include <dt-bindings/regulator/richtek,rt5190a-regulator.h>
 #include "bpi-r4-hardened-soc.dtsi"
-
 / {
     aliases { ethernet0 = &gmac0; ethernet1 = &gmac1; ethernet2 = &gmac2; };
     chosen { stdout-path = "serial0:115200n8"; };

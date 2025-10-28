@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: MIT
 #include "bpi-r4-hardened-board.dtsi"
-
 / {
     compatible = "custom,r4", "mediatek,mt7988a";
     model = "MT7988A R4-type (2x SFP+)";
