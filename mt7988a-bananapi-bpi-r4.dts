@@ -1,0 +1,8 @@
+/dts-v1/;
+/* U-Boot shim DTS for BPI-R4 */
+#include "mt7988-sd-rfb.dts"
+
+/ {
+    compatible = "bananapi,bpi-r4", "mediatek,mt7988a";
+    model = "Banana Pi BPI-R4";
+};
