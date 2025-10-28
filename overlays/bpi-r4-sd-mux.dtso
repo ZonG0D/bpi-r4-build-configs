@@ -4,7 +4,7 @@
 
 #include <dt-bindings/gpio/gpio.h>
 
-/* Overlay: force SD card mux/state on the MMC host at 0x11230000 */
+/* SD host at 0x11230000 exists on MT7988; uses standard 'pio' label */
 &{/soc/mmc@11230000} {
     pinctrl-names = "default", "state_uhs";
     pinctrl-0 = <&mmc0_pins_sdcard>;
@@ -15,7 +15,6 @@
     max-frequency = <52000000>;
     cap-sd-highspeed;
 
-    /* Using 3.3V signalling for both vmmc and vqmmc */
     vmmc-supply  = <&reg_3p3v>;
     vqmmc-supply = <&reg_3p3v>;
 

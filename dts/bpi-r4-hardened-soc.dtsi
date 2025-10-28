@@ -1,26 +1,7 @@
 // SPDX-License-Identifier: MIT
-
-#include <dt-bindings/interrupt-controller/arm-gic.h>
-
-/* Top-level nodes must be wrapped in a root block in a .dtsi */
- /{
-    pmu {
-        compatible = "arm,cortex-a73-pmu";
-        interrupt-parent = <&gic>;
-        interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_LOW>;
-    };
-
-    timer {
-        compatible = "arm,armv8-timer";
-        interrupt-parent = <&gic>;
-        interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_LOW>,
-                 <GIC_PPI 14 IRQ_TYPE_LEVEL_LOW>,
-                 <GIC_PPI 11 IRQ_TYPE_LEVEL_LOW>,
-                 <GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>;
-    };
-
-    psci {
-        compatible = "arm,psci-0.2";
-        method = "smc";
-    };
-};
+/*
+ * Intentionally empty now.
+ * Earlier versions tried to create top-level nodes (psci, timers, pmu),
+ * but those usually already exist upstream and labels vary between trees.
+ * Keeping this file present (empty) allows your include chain to stay stable.
+ */
