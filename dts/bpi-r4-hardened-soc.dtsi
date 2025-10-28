@@ -3,7 +3,7 @@
 #include <dt-bindings/interrupt-controller/arm-gic.h>
 
 /* Top-level nodes must be wrapped in a root block in a .dtsi */
- / {
+ /{
     pmu {
         compatible = "arm,cortex-a73-pmu";
         interrupt-parent = <&gic>;
