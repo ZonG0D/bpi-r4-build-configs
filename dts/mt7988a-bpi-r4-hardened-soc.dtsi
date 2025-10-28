@@ -3,7 +3,7 @@
 
 #include <dt-bindings/interrupt-controller/arm-gic.h>
 
- / {
+/ {
     compatible = "mediatek,mt7988a";
     interrupt-parent = <&gic>;
     #address-cells = <2>;
