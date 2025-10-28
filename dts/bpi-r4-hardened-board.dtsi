@@ -1,0 +1,45 @@
+// SPDX-License-Identifier: MIT
+#include <dt-bindings/gpio/bpi-r4-gpio.h>
+#include <dt-bindings/leds/common.h>
+#include <dt-bindings/regulator/richtek,rt5190a-regulator.h>
+#include "bpi-r4-hardened-soc.dtsi"
+
+/ {
+    aliases { ethernet0 = &gmac0; ethernet1 = &gmac1; ethernet2 = &gmac2; };
+    chosen { stdout-path = "serial0:115200n8"; };
+
+    fan: pwm-fan { compatible = "pwm-fan"; cooling-levels = <0 80 128 255>; #cooling-cells = <2>; pwms = <&pwm 0 50000>; status = "okay"; };
+
+    gpio-leds {
+        compatible = "gpio-leds";
+        led_green: led-green { function = LED_FUNCTION_STATUS; color = <LED_COLOR_ID_GREEN>; gpios = <&pio 79 GPIO_ACTIVE_HIGH>; default-state = "on"; };
+        led_blue: led-blue { function = LED_FUNCTION_WPS; color = <LED_COLOR_ID_BLUE>; gpios = <&pio 63 GPIO_ACTIVE_HIGH>; default-state = "off"; };
+    };
+
+    reg_1p8v: regulator-1p8v { compatible = "regulator-fixed"; regulator-name = "fixed-1.8V"; regulator-min-microvolt = <1800000>; regulator-max-microvolt = <1800000>; regulator-boot-on; regulator-always-on; };
+    reg_3p3v: regulator-3p3v { compatible = "regulator-fixed"; regulator-name = "fixed-3.3V"; regulator-min-microvolt = <3300000>; regulator-max-microvolt = <3300000>; regulator-boot-on; regulator-always-on; };
+
+    sfp1: sfp1 { compatible = "sff,sfp"; i2c-bus = <&i2c_sfp1>; maximum-power-milliwatt = <3000>; los-gpios = <&pio 54 GPIO_ACTIVE_HIGH>; mod-def0-gpios = <&pio 82 GPIO_ACTIVE_LOW>; rate-select0-gpios = <&pio 21 GPIO_ACTIVE_LOW>; tx-disable-gpios = <&pio 70 GPIO_ACTIVE_HIGH>; tx-fault-gpios = <&pio 69 GPIO_ACTIVE_HIGH>; };
+};
+
+&cci { proc-supply = <&rt5190_buck3>; };
+&cpu0 { proc-supply = <&rt5190_buck3>; };
+&cpu1 { proc-supply = <&rt5190_buck3>; };
+&cpu2 { proc-supply = <&rt5190_buck3>; };
+&cpu3 { proc-supply = <&rt5190_buck3>; };
+
+&cpu_thermal {
+    trips {
+        cpu_trip_hot: hot { temperature = <120000>; hysteresis = <2000>; type = "hot"; };
+        cpu_trip_active_high: active-high { temperature = <115000>; hysteresis = <2000>; type = "active"; };
+        cpu_trip_active_med: active-med { temperature = <85000>; hysteresis = <2000>; type = "active"; };
+        cpu_trip_active_low: active-low { temperature = <40000>; hysteresis = <2000>; type = "active"; };
+    };
+    cooling-maps {
+        map-cpu-active-high { cooling-device = <&fan 3 3>; trip = <&cpu_trip_active_high>; };
+        map-cpu-active-med { cooling-device = <&fan 2 2>; trip = <&cpu_trip_active_med>; };
+        map-cpu-active-low { cooling-device = <&fan 1 1>; trip = <&cpu_trip_active_low>; };
+    };
+};
+
+&gmac2 { managed = "in-band-status"; phy-mode = "usxgmii"; sfp = <&sfp1>; };

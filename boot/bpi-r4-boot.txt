@@ -3,9 +3,9 @@ setenv bootmenu_delay -1
 setenv bootmenu_title 'BPI-R4 boot menu'
 setenv bootmenu_ansi n
 setenv boot_targets mmc0
-setenv loadaddr       0x46000000
-setenv kernel_addr_r  0x44000000
-setenv fdt_addr_r     0x48000000
+setenv loadaddr 0x46000000
+setenv kernel_addr_r 0x44000000
+setenv fdt_addr_r 0x48000000
 
 if test -z "${env_inited}"; then
   echo [env] initializing persistent environment on FAT
