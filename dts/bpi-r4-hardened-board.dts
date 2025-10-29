@@ -9,15 +9,18 @@
 
 / {
     model = "Banana Pi BPI-R4 (hardened, no-RFB)";
-    compatible = "bananapi,bpi-r4", "mediatek,mt7988a";
+    compatible = "bananapi,bpi-r4", "mediatek,mt7988a", "mediatek,mt7988";
 
-    /* Commented out to avoid unresolved labels if gmac* aren't in mt7988a.dtsi
     aliases {
-        ethernet0 = &gmac0;
-        ethernet1 = &gmac1;
-        ethernet2 = &gmac2;
+        serial0 = &{/soc/serial@11000000};
+        /*
+         * Commented out to avoid unresolved labels if gmac* aren't in
+         * mt7988a.dtsi
+         * ethernet0 = &gmac0;
+         * ethernet1 = &gmac1;
+         * ethernet2 = &gmac2;
+         */
     };
-    */
 
     chosen { stdout-path = "serial0:115200n8"; };
 
