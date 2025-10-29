@@ -2,82 +2,80 @@
 /*
  * Keep SoC-level CPU topology data in the SoC fragment so every board that
  * includes it inherits a consistent view of the cores.  Some downstream trees
- * accidentally drop the Cortex-A73 compatible strings, so we restate the full
- * /cpus block here instead of letting board dts files paper over the loss.
+ * accidentally drop the Cortex-A73 compatible strings, so restate the core
+ * properties here instead of letting board dts files paper over the loss.
  */
 
-/ {
-    cpus {
-        #address-cells = <1>;
-        #size-cells = <0>;
+&cpus {
+    #address-cells = <1>;
+    #size-cells = <0>;
+};
 
-        cpu0: cpu@0 {
-            compatible = "arm,cortex-a73";
-            reg = <0x0>;
-            device_type = "cpu";
-            enable-method = "psci";
-            clocks = <&mcusys CLK_MCU_ARM_DIV_SEL>, <&topckgen CLK_TOP_XTAL>;
-            clock-names = "cpu", "intermediate";
-            operating-points-v2 = <&cluster0_opp>;
-            mediatek,cci = <&cci>;
-        };
+&cpu0 {
+    compatible = "arm,cortex-a73";
+    reg = <0x0>;
+    device_type = "cpu";
+    enable-method = "psci";
+    clocks = <&mcusys CLK_MCU_ARM_DIV_SEL>, <&topckgen CLK_TOP_XTAL>;
+    clock-names = "cpu", "intermediate";
+    operating-points-v2 = <&cluster0_opp>;
+    mediatek,cci = <&cci>;
+};
 
-        cpu1: cpu@1 {
-            compatible = "arm,cortex-a73";
-            reg = <0x1>;
-            device_type = "cpu";
-            enable-method = "psci";
-            clocks = <&mcusys CLK_MCU_ARM_DIV_SEL>, <&topckgen CLK_TOP_XTAL>;
-            clock-names = "cpu", "intermediate";
-            operating-points-v2 = <&cluster0_opp>;
-            mediatek,cci = <&cci>;
-        };
+&cpu1 {
+    compatible = "arm,cortex-a73";
+    reg = <0x1>;
+    device_type = "cpu";
+    enable-method = "psci";
+    clocks = <&mcusys CLK_MCU_ARM_DIV_SEL>, <&topckgen CLK_TOP_XTAL>;
+    clock-names = "cpu", "intermediate";
+    operating-points-v2 = <&cluster0_opp>;
+    mediatek,cci = <&cci>;
+};
 
-        cpu2: cpu@2 {
-            compatible = "arm,cortex-a73";
-            reg = <0x2>;
-            device_type = "cpu";
-            enable-method = "psci";
-            clocks = <&mcusys CLK_MCU_ARM_DIV_SEL>, <&topckgen CLK_TOP_XTAL>;
-            clock-names = "cpu", "intermediate";
-            operating-points-v2 = <&cluster0_opp>;
-            mediatek,cci = <&cci>;
-        };
+&cpu2 {
+    compatible = "arm,cortex-a73";
+    reg = <0x2>;
+    device_type = "cpu";
+    enable-method = "psci";
+    clocks = <&mcusys CLK_MCU_ARM_DIV_SEL>, <&topckgen CLK_TOP_XTAL>;
+    clock-names = "cpu", "intermediate";
+    operating-points-v2 = <&cluster0_opp>;
+    mediatek,cci = <&cci>;
+};
 
-        cpu3: cpu@3 {
-            compatible = "arm,cortex-a73";
-            reg = <0x3>;
-            device_type = "cpu";
-            enable-method = "psci";
-            clocks = <&mcusys CLK_MCU_ARM_DIV_SEL>, <&topckgen CLK_TOP_XTAL>;
-            clock-names = "cpu", "intermediate";
-            operating-points-v2 = <&cluster0_opp>;
-            mediatek,cci = <&cci>;
-        };
+&cpu3 {
+    compatible = "arm,cortex-a73";
+    reg = <0x3>;
+    device_type = "cpu";
+    enable-method = "psci";
+    clocks = <&mcusys CLK_MCU_ARM_DIV_SEL>, <&topckgen CLK_TOP_XTAL>;
+    clock-names = "cpu", "intermediate";
+    operating-points-v2 = <&cluster0_opp>;
+    mediatek,cci = <&cci>;
+};
 
-        cluster0_opp: opp-table-0 {
-            compatible = "operating-points-v2";
-            opp-shared;
+&cluster0_opp {
+    compatible = "operating-points-v2";
+    opp-shared;
 
-            opp-800000000 {
-                opp-hz = /bits/ 64 <800000000>;
-                opp-microvolt = <850000>;
-            };
+    opp-800000000 {
+        opp-hz = /bits/ 64 <800000000>;
+        opp-microvolt = <850000>;
+    };
 
-            opp-1100000000 {
-                opp-hz = /bits/ 64 <1100000000>;
-                opp-microvolt = <850000>;
-            };
+    opp-1100000000 {
+        opp-hz = /bits/ 64 <1100000000>;
+        opp-microvolt = <850000>;
+    };
 
-            opp-1500000000 {
-                opp-hz = /bits/ 64 <1500000000>;
-                opp-microvolt = <850000>;
-            };
+    opp-1500000000 {
+        opp-hz = /bits/ 64 <1500000000>;
+        opp-microvolt = <850000>;
+    };
 
-            opp-1800000000 {
-                opp-hz = /bits/ 64 <1800000000>;
-                opp-microvolt = <900000>;
-            };
-        };
+    opp-1800000000 {
+        opp-hz = /bits/ 64 <1800000000>;
+        opp-microvolt = <900000>;
     };
 };
