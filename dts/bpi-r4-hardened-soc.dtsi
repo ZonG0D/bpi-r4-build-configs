@@ -4,4 +4,16 @@
  * Earlier versions tried to create top-level nodes (psci, timers, pmu),
  * but those usually already exist upstream and labels vary between trees.
  * Keeping this file present (empty) allows your include chain to stay stable.
+ *
+ * The only exceptions we restore are CPU compatibility strings, because some
+ * downstream vendor trees replace them. Reassert the original Cortex-A73
+ * compatible on cpu@0 without touching other properties.
  */
+
+/ {
+    cpus {
+        cpu@0 {
+            compatible = "arm,cortex-a73";
+        };
+    };
+};
